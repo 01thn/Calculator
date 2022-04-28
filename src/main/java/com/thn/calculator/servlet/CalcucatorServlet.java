@@ -1,5 +1,7 @@
 package com.thn.calculator.servlet;
 
+import com.thn.calculator.entity.Calculator;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -16,12 +18,29 @@ public class CalcucatorServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Calculator calculator = new Calculator();
+
         double var1 = Double.parseDouble(req.getParameter("var1"));
         double var2 = Double.parseDouble(req.getParameter("var2"));
+        double result;
         String operation = req.getParameter("operation");
+
         switch (operation) {
             case "sum":
-                req.setAttribute("result", var1 + var2);
+                result = calculator.sum(var1, var2);
+                req.setAttribute("result", result);
+                break;
+            case "minus":
+                result = calculator.minus(var1, var2);
+                req.setAttribute("result", result);
+                break;
+            case "multiply":
+                result = calculator.multiply(var1, var2);
+                req.setAttribute("result", result);
+                break;
+            case "divide":
+                result = calculator.divide(var1, var2);
+                req.setAttribute("result", result);
                 break;
         }
         req.getRequestDispatcher("/pages/calculator.jsp").forward(req, resp);

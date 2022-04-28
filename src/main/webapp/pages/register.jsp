@@ -13,5 +13,6 @@
         <input type="password" id="password" name="password" placeholder="Enter your password">
         <input type="submit" value="Sign up">
     </form>
+    <p>${requestScope.Message}</p>
 </body>
 </html>

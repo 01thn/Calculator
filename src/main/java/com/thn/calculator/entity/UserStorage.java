@@ -1,20 +1,38 @@
 package com.thn.calculator.entity;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-// TODO transform into singleton
+import java.util.List;
 
 public class UserStorage {
-    private Map<Long, ArrayList<Integer>> storage;
+    private static UserStorage instance;
+    private List<User> storage;
 
-    public UserStorage() {
-        storage = new HashMap<>();
+    private UserStorage() {
+        this.storage = new ArrayList<>();
     }
 
-    public void addUser(User user) {
-        storage.put(user.getId(), new ArrayList<Integer>());
+    public static UserStorage getInstance() {
+        if (instance == null) {
+            instance = new UserStorage();
+        }
+        return instance;
+    }
+
+    public UserStorage addUser(User user){
+        storage.add(user);
+        return instance;
+    }
+
+    public boolean userExists(String login){
+        return storage.stream()
+                .map(User::getLogin)
+                .anyMatch(user -> user.equals(login));
+    }
+
+    public boolean authUser(String login, String password){
+        return storage.stream()
+                .filter(user -> user.getLogin().equals(login))
+                .anyMatch(user -> user.getPassword().equals(password));
     }
 
     @Override

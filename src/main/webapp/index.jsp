@@ -2,12 +2,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>JSP - Hello World</title>
+    <title>Start page</title>
 </head>
 <body>
-</h1>
-<br/>
-<a href="">Sign up</a>
-<a href="calc">Move to calculator</a>
+<a href="sign-up">Sign up</a>
+<a href="sign-in">Sign in</a>
 </body>
 </html>
