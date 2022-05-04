@@ -1,6 +1,7 @@
 package com.thn.calculator.entity;
 
 public class Calculator {
+    // TODO avoid boxing
     public Calculator() {
     }
 

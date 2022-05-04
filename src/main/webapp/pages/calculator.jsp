@@ -4,6 +4,10 @@
     <title>Calculator</title>
 </head>
 <body>
+    <header>
+        <a href="logout">logout</a>
+    </header>
+    <main>
     <form method="post" action="calc">
         <input type="text" name="var1" placeholder="Variable 1">
         <input type="text" name="var2" placeholder="Variable 2">
@@ -18,5 +22,6 @@
         <input type="submit" value="Calculate">
     </form>
     <p>${requestScope.result}</p>
+    </main>
 </body>
 </html>

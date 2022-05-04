@@ -2,6 +2,8 @@ package com.thn.calculator.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class UserStorage {
     private static UserStorage instance;
