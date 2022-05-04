@@ -2,6 +2,8 @@ package com.thn.calculator.servlet;
 
 import com.thn.calculator.service.UserValidateService;
 import com.thn.calculator.storage.SQLChangeStorage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,9 +14,11 @@ import java.io.IOException;
 
 @WebServlet("/change")
 public class ChangePassServlet extends HttpServlet {
+    private static final Logger logger = LoggerFactory.getLogger(SignUpServlet.class);
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/pages/change.jsp").forward(req,resp);
+        req.getRequestDispatcher("/pages/change.jsp").forward(req, resp);
     }
 
     @Override
@@ -22,16 +26,19 @@ public class ChangePassServlet extends HttpServlet {
         SQLChangeStorage sqlChangeStorage = new SQLChangeStorage();
         String login = req.getParameter("login");
         String newPass = req.getParameter("password");
-        if(sqlChangeStorage.find(login)){
-            if(UserValidateService.passwordValidate(newPass)){
+        if (sqlChangeStorage.find(login)) {
+            if (UserValidateService.passwordValidate(newPass)) {
                 req.setAttribute("Message", "Password must consist at least 6 char and no special chars");
-                req.getRequestDispatcher("/pages/change.jsp").forward(req,resp);
+                req.getRequestDispatcher("/pages/change.jsp").forward(req, resp);
+                logger.error("User " + login + " inputted incorrect type of password");
             }
             sqlChangeStorage.save(login, newPass);
             resp.sendRedirect("sign-in");
+            logger.info("User " + login + " changed his password");
         } else {
             req.setAttribute("Message", "Looks like user does not exist. <a href=\"sign-up\">Create an account</a>");
-            req.getRequestDispatcher("/pages/change.jsp").forward(req,resp);
+            req.getRequestDispatcher("/pages/change.jsp").forward(req, resp);
+            logger.error("User tried to touch user which doesn't exist");
         }
     }
 }

@@ -3,6 +3,8 @@ package com.thn.calculator.servlet;
 import com.thn.calculator.security.JWTManager;
 import com.thn.calculator.storage.InMemoryAuthStorage;
 import com.thn.calculator.storage.SQLAuthStorage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,6 +16,7 @@ import java.io.IOException;
 
 @WebServlet("/sign-in")
 public class SignInServlet extends HttpServlet {
+    private static final Logger logger = LoggerFactory.getLogger(SignUpServlet.class);
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Cookie[] cookies = req.getCookies();
@@ -23,6 +26,7 @@ public class SignInServlet extends HttpServlet {
             String login = (String) req.getSession().getAttribute("login");
             if (JWTManager.verifyToken(token, login)) {
                 resp.sendRedirect("calc");
+                logger.info("User was successfully logged in by JWT");
                 return;
             }
         }
@@ -42,6 +46,7 @@ public class SignInServlet extends HttpServlet {
             resp.addCookie(cookie1);
             req.getSession().setAttribute("login", login);
             resp.sendRedirect("calc");
+            logger.info("User was successfully logged in by credos");
         } else {
             req.setAttribute("Message", "You're not registered");
             req.getRequestDispatcher("/pages/authentication.jsp").forward(req, resp);

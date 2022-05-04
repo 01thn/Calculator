@@ -1,0 +1,2 @@
+04.05.2022 16:36:24.441 [http-nio-8080-exec-6] INFO   c.t.c.s.SignUpServlet - User was successfully logged in by credos
+04.05.2022 16:37:05.124 [http-nio-8080-exec-4] INFO   c.t.c.s.SignUpServlet - User was successfully logged in by JWT

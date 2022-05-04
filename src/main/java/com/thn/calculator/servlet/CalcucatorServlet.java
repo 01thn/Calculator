@@ -1,6 +1,8 @@
 package com.thn.calculator.servlet;
 
 import com.thn.calculator.entity.Calculator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,6 +13,8 @@ import java.io.IOException;
 
 @WebServlet("/calc")
 public class CalcucatorServlet extends HttpServlet {
+    private static final Logger logger = LoggerFactory.getLogger(SignUpServlet.class);
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.getRequestDispatcher("/pages/calculator.jsp").forward(req, resp);
@@ -29,18 +33,22 @@ public class CalcucatorServlet extends HttpServlet {
             case "sum":
                 result = calculator.sum(var1, var2);
                 req.setAttribute("result", result);
+                logger.info("User used an operation of sum");
                 break;
             case "minus":
                 result = calculator.minus(var1, var2);
                 req.setAttribute("result", result);
+                logger.info("User used an operation of minus");
                 break;
             case "multiply":
                 result = calculator.multiply(var1, var2);
                 req.setAttribute("result", result);
+                logger.info("User used an operation of multiply");
                 break;
             case "divide":
                 result = calculator.divide(var1, var2);
                 req.setAttribute("result", result);
+                logger.info("User used an operation of divide");
                 break;
         }
         req.getRequestDispatcher("/pages/calculator.jsp").forward(req, resp);
