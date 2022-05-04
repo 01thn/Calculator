@@ -8,6 +8,7 @@
         <a href="logout">logout</a>
     </header>
     <main>
+        <h2>${requestScope.Hello}</h2>
     <form method="post" action="calc">
         <input type="text" name="var1" placeholder="Variable 1">
         <input type="text" name="var2" placeholder="Variable 2">

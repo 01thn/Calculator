@@ -7,4 +7,9 @@ public class InMemoryAuthStorage implements AuthStorage {
     public boolean isAuthenticated(String login, String password) {
         return UserStorage.getInstance().authUser(login, password);
     }
+
+    @Override
+    public Long getId(String login) {
+        return null;
+    }
 }

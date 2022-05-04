@@ -1,2 +1,9 @@
 04.05.2022 16:36:24.441 [http-nio-8080-exec-6] INFO   c.t.c.s.SignUpServlet - User was successfully logged in by credos
 04.05.2022 16:37:05.124 [http-nio-8080-exec-4] INFO   c.t.c.s.SignUpServlet - User was successfully logged in by JWT
+04.05.2022 17:06:53.347 [http-nio-8080-exec-7] INFO   c.t.c.s.SignUpServlet - User was successfully logged in by credos
+04.05.2022 20:57:43.187 [http-nio-8080-exec-3] INFO   c.t.c.s.SignUpServlet - User was successfully logged in by credos
+04.05.2022 20:58:14.187 [http-nio-8080-exec-6] INFO   c.t.c.s.SignUpServlet - User used an operation of minus
+04.05.2022 21:00:51.348 [http-nio-8080-exec-9] INFO   c.t.c.s.SignUpServlet - User was successfully logged in by JWT
+04.05.2022 21:00:55.452 [http-nio-8080-exec-1] INFO   c.t.c.s.SignUpServlet - User was successfully logged out
+04.05.2022 21:39:12.582 [http-nio-8080-exec-7] INFO   c.t.c.s.SignUpServlet - User was successfully logged in by credos
+04.05.2022 21:39:18.656 [http-nio-8080-exec-9] INFO   c.t.c.s.CalcucatorServlet - User used an operation of sum

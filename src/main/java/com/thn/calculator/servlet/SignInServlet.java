@@ -42,13 +42,14 @@ public class SignInServlet extends HttpServlet {
         if (inMemoryAuthStorage.isAuthenticated(login, password) || sqlAuthStorage.isAuthenticated(login, password)) {
             String token = JWTManager.createToken(login);
             Cookie cookie1 = new Cookie("token", token);
-            cookie1.setMaxAge(600);
+            cookie1.setMaxAge(1800);
             resp.addCookie(cookie1);
             req.getSession().setAttribute("login", login);
+            req.getSession().setAttribute("id", sqlAuthStorage.getId(login));
             resp.sendRedirect("calc");
             logger.info("User was successfully logged in by credos");
         } else {
-            req.setAttribute("Message", "You're not registered");
+            req.setAttribute("Message", "Something went wrong. Try to reset password");
             req.getRequestDispatcher("/pages/authentication.jsp").forward(req, resp);
         }
     }

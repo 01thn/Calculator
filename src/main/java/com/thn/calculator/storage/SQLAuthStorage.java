@@ -25,5 +25,24 @@ public class SQLAuthStorage implements AuthStorage {
         }
         return result;
     }
+
+    @Override
+    public Long getId(String login) {
+        Long id = null;
+        try {
+            Class.forName("org.postgresql.Driver");
+            Connection connection = new DBConnectionManager().getConnection();
+            PreparedStatement preparedStatement = connection
+                    .prepareStatement("select * from users where login=?");
+            preparedStatement.setString(1, login);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                id = rs.getLong(1);
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return id;
+    }
 }
 
