@@ -1,10 +1,14 @@
 package com.thn.calculator.storage;
 
 import com.thn.calculator.db.DBConnectionManager;
+import com.thn.calculator.entity.Operation;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SQLOperationStorage implements OperationStorage {
     @Override
@@ -24,5 +28,41 @@ public class SQLOperationStorage implements OperationStorage {
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    private ResultSet prepareStory(long userId){
+        ResultSet rs = null;
+        try{
+            Class.forName("org.postgresql.Driver");
+            Connection connection = new DBConnectionManager().getConnection();
+            PreparedStatement preparedStatement = connection
+                    .prepareStatement("select * from operation where user_id=?");
+            preparedStatement.setLong(1,userId);
+            rs = preparedStatement.executeQuery();
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return rs;
+    }
+
+    @Override
+    public List<Operation> getStory(long userId) {
+        List<Operation> operations = new ArrayList<>();
+        try {
+            ResultSet rs = prepareStory(userId);
+            while (rs.next()) {
+                operations.add(new Operation(
+                                rs.getLong(1),
+                                rs.getLong(2),
+                                rs.getDouble(3),
+                                rs.getDouble(4),
+                                rs.getString(5),
+                                rs.getDouble(6)
+                        ));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return operations;
     }
 }

@@ -17,20 +17,27 @@ import java.io.IOException;
 @WebServlet("/sign-in")
 public class SignInServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(SignUpServlet.class);
+    private static final SQLAuthStorage sqlAuthStorage = new SQLAuthStorage();
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Cookie[] cookies = req.getCookies();
+        String token = null;
+        String login = null;
         for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("token")) ;
-            String token = cookie.getValue();
-            String login = (String) req.getSession().getAttribute("login");
-            if (JWTManager.verifyToken(token, login)) {
-                resp.sendRedirect("calc");
-                logger.info("User was successfully logged in by JWT");
-                return;
+            if (cookie.getName().equals("token")) {
+                token = cookie.getValue();
+            }
+            if (cookie.getName().equals("login")){
+                login = cookie.getValue();
             }
         }
-        req.getRequestDispatcher("/pages/authentication.jsp").forward(req, resp);
+        if (token != null && login != null) {
+            if(JWTManager.verifyToken(token,login)){
+                req.getSession().setAttribute("id", sqlAuthStorage.getId(login));
+                resp.sendRedirect("calc");
+            }
+        } else req.getRequestDispatcher("/pages/authentication.jsp").forward(req, resp);
     }
 
     @Override
@@ -38,13 +45,14 @@ public class SignInServlet extends HttpServlet {
         String login = req.getParameter("login");
         String password = req.getParameter("password");
         InMemoryAuthStorage inMemoryAuthStorage = new InMemoryAuthStorage();
-        SQLAuthStorage sqlAuthStorage = new SQLAuthStorage();
         if (inMemoryAuthStorage.isAuthenticated(login, password) || sqlAuthStorage.isAuthenticated(login, password)) {
             String token = JWTManager.createToken(login);
             Cookie cookie1 = new Cookie("token", token);
+            Cookie cookie2 = new Cookie("login", login);
             cookie1.setMaxAge(1800);
+            cookie2.setMaxAge(1800);
             resp.addCookie(cookie1);
-            req.getSession().setAttribute("login", login);
+            resp.addCookie(cookie2);
             req.getSession().setAttribute("id", sqlAuthStorage.getId(login));
             resp.sendRedirect("calc");
             logger.info("User was successfully logged in by credos");

@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,10 +16,17 @@ import java.io.IOException;
 @WebServlet("/calc")
 public class CalcucatorServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(CalcucatorServlet.class);
+    private static String userName;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setAttribute("Hello", "Hello, "+req.getSession().getAttribute("login"));
+        Cookie[] cookies=req.getCookies();
+        for(Cookie cookie : cookies){
+            if(cookie.getName().equals("login")){
+                userName = cookie.getValue();
+            }
+        }
+        req.setAttribute("Hello", "Hello, "+userName);
         req.getRequestDispatcher("/pages/calculator.jsp").forward(req, resp);
     }
 
@@ -59,6 +67,7 @@ public class CalcucatorServlet extends HttpServlet {
                 logger.info("User used an operation of divide");
                 break;
         }
+        req.setAttribute("Hello", "Hello, "+userName);
         req.getRequestDispatcher("/pages/calculator.jsp").forward(req, resp);
     }
 }
