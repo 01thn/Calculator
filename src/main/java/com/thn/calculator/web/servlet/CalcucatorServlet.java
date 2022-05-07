@@ -1,6 +1,6 @@
-package com.thn.calculator.servlet;
+package com.thn.calculator.web.servlet;
 
-import com.thn.calculator.entity.Calculator;
+import com.thn.calculator.service.CalculatorService;
 import com.thn.calculator.storage.SQLOperationStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,19 +20,18 @@ public class CalcucatorServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Cookie[] cookies=req.getCookies();
-        for(Cookie cookie : cookies){
-            if(cookie.getName().equals("login")){
+        Cookie[] cookies = req.getCookies();
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("login")) {
                 userName = cookie.getValue();
             }
         }
-        req.setAttribute("Hello", "Hello, "+userName);
+        req.setAttribute("Hello", "Hello, " + userName);
         req.getRequestDispatcher("/pages/calculator.jsp").forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Calculator calculator = new Calculator();
         SQLOperationStorage sqlOperationStorage = new SQLOperationStorage();
 
         long id = (long) req.getSession().getAttribute("id");
@@ -43,31 +42,31 @@ public class CalcucatorServlet extends HttpServlet {
 
         switch (operation) {
             case "sum":
-                result = calculator.sum(var1, var2);
+                result = CalculatorService.sum(var1, var2);
                 req.setAttribute("result", result);
-                sqlOperationStorage.save(id,var1,var2,"sum",result);
+                sqlOperationStorage.save(id, var1, var2, "sum", result);
                 logger.info("User used an operation of sum");
                 break;
             case "minus":
-                result = calculator.minus(var1, var2);
+                result = CalculatorService.minus(var1, var2);
                 req.setAttribute("result", result);
-                sqlOperationStorage.save(id,var1,var2,"minus",result);
+                sqlOperationStorage.save(id, var1, var2, "minus", result);
                 logger.info("User used an operation of minus");
                 break;
             case "multiply":
-                result = calculator.multiply(var1, var2);
+                result = CalculatorService.multiply(var1, var2);
                 req.setAttribute("result", result);
-                sqlOperationStorage.save(id,var1,var2,"multiply",result);
+                sqlOperationStorage.save(id, var1, var2, "multiply", result);
                 logger.info("User used an operation of multiply");
                 break;
             case "divide":
-                result = calculator.divide(var1, var2);
+                result = CalculatorService.divide(var1, var2);
                 req.setAttribute("result", result);
-                sqlOperationStorage.save(id,var1,var2,"divide",result);
+                sqlOperationStorage.save(id, var1, var2, "divide", result);
                 logger.info("User used an operation of divide");
                 break;
         }
-        req.setAttribute("Hello", "Hello, "+userName);
+        req.setAttribute("Hello", "Hello, " + userName);
         req.getRequestDispatcher("/pages/calculator.jsp").forward(req, resp);
     }
 }

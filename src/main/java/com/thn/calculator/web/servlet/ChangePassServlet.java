@@ -1,7 +1,8 @@
-package com.thn.calculator.servlet;
+package com.thn.calculator.web.servlet;
 
-import com.thn.calculator.service.UserValidateService;
-import com.thn.calculator.storage.SQLChangeStorage;
+import com.thn.calculator.storage.SQLUserStorage;
+import com.thn.calculator.web.info.Messages;
+import com.thn.calculator.web.validator.UserValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +15,7 @@ import java.io.IOException;
 
 @WebServlet("/change")
 public class ChangePassServlet extends HttpServlet {
-    private static final Logger logger = LoggerFactory.getLogger(SignUpServlet.class);
+    private static final Logger logger = LoggerFactory.getLogger(ChangePassServlet.class);
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -23,20 +24,22 @@ public class ChangePassServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        SQLChangeStorage sqlChangeStorage = new SQLChangeStorage();
+        SQLUserStorage sqlUserStorage = new SQLUserStorage();
+        UserValidator userValidator = new UserValidator();
         String login = req.getParameter("login");
         String newPass = req.getParameter("password");
-        if (sqlChangeStorage.find(login)) {
-            if (UserValidateService.passwordValidate(newPass)) {
-                req.setAttribute("Message", "Password must consist at least 6 char and no special chars");
+        if (sqlUserStorage.find(login)) {
+            if (userValidator.passwordValidate(newPass)) {
+                req.setAttribute("Message", Messages.PASS_REQS.getText());
                 req.getRequestDispatcher("/pages/change.jsp").forward(req, resp);
                 logger.error("User " + login + " inputted incorrect type of password");
             }
-            sqlChangeStorage.save(login, newPass);
+            sqlUserStorage.changePass(login, newPass);
             resp.sendRedirect("sign-in");
             logger.info("User " + login + " changed his password");
         } else {
-            req.setAttribute("Message", "Looks like user does not exist. <a href=\"sign-up\">Create an account</a>");
+            req.setAttribute("Message", Messages.USER_NOT_FOUND.getText() +
+                    "<a href=\"sign-up\">" + Messages.CREATE_ACC.getText() + "</a>");
             req.getRequestDispatcher("/pages/change.jsp").forward(req, resp);
             logger.error("User tried to touch user which doesn't exist");
         }

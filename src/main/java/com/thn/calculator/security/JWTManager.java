@@ -4,14 +4,15 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
 
 public class JWTManager {
-    private final static String secret = "secret";
+    private final String secret = "secret";
 
-    public static String createToken(String login) {
+    public JWTManager() {
+    }
+
+    public String createToken(String login) {
         String token = null;
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
@@ -25,7 +26,7 @@ public class JWTManager {
         return token;
     }
 
-    public static boolean verifyToken(String token, String login) {
+    public boolean verifyToken(String token, String login) {
         boolean result = false;
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);

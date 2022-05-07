@@ -12,14 +12,4 @@
     <error-page>
         <location>/pages/error.jsp</location>
     </error-page>
-
-<!--    <filter>-->
-<!--        <filter-name>AuthFilter</filter-name>-->
-<!--        <filter-class>com.thn.calculator.filter.AuthFilter</filter-class>-->
-<!--    </filter>-->
-
-<!--    <filter-mapping>-->
-<!--        <filter-name>AuthFilter</filter-name>-->
-<!--        <url-pattern>/*</url-pattern>-->
-<!--    </filter-mapping>-->
 </web-app>

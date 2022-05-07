@@ -1,8 +1,9 @@
-package com.thn.calculator.servlet;
+package com.thn.calculator.web.servlet;
 
 import com.thn.calculator.security.JWTManager;
-import com.thn.calculator.storage.InMemoryAuthStorage;
-import com.thn.calculator.storage.SQLAuthStorage;
+import com.thn.calculator.service.CookieService;
+import com.thn.calculator.storage.SQLUserStorage;
+import com.thn.calculator.web.info.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,25 +17,19 @@ import java.io.IOException;
 
 @WebServlet("/sign-in")
 public class SignInServlet extends HttpServlet {
-    private static final Logger logger = LoggerFactory.getLogger(SignUpServlet.class);
-    private static final SQLAuthStorage sqlAuthStorage = new SQLAuthStorage();
+    private static final Logger logger = LoggerFactory.getLogger(SignInServlet.class);
+    private static final SQLUserStorage sqlUserStorage = new SQLUserStorage();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Cookie[] cookies = req.getCookies();
-        String token = null;
-        String login = null;
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("token")) {
-                token = cookie.getValue();
-            }
-            if (cookie.getName().equals("login")){
-                login = cookie.getValue();
-            }
-        }
+        JWTManager jwtManager = new JWTManager();
+        CookieService cookieService = new CookieService();
+        String token = cookieService.getToken(cookies);
+        String login = cookieService.getLogin(cookies);
         if (token != null && login != null) {
-            if(JWTManager.verifyToken(token,login)){
-                req.getSession().setAttribute("id", sqlAuthStorage.getId(login));
+            if (jwtManager.verifyToken(token, login)) {
+                req.getSession().setAttribute("id", sqlUserStorage.getId(login));
                 resp.sendRedirect("calc");
             }
         } else req.getRequestDispatcher("/pages/authentication.jsp").forward(req, resp);
@@ -42,22 +37,22 @@ public class SignInServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        JWTManager jwtManager = new JWTManager();
         String login = req.getParameter("login");
         String password = req.getParameter("password");
-        InMemoryAuthStorage inMemoryAuthStorage = new InMemoryAuthStorage();
-        if (inMemoryAuthStorage.isAuthenticated(login, password) || sqlAuthStorage.isAuthenticated(login, password)) {
-            String token = JWTManager.createToken(login);
+        if (sqlUserStorage.isAuthenticated(login, password)) {
+            String token = jwtManager.createToken(login);
             Cookie cookie1 = new Cookie("token", token);
             Cookie cookie2 = new Cookie("login", login);
             cookie1.setMaxAge(1800);
             cookie2.setMaxAge(1800);
             resp.addCookie(cookie1);
             resp.addCookie(cookie2);
-            req.getSession().setAttribute("id", sqlAuthStorage.getId(login));
+            req.getSession().setAttribute("id", sqlUserStorage.getId(login));
             resp.sendRedirect("calc");
             logger.info("User was successfully logged in by credos");
         } else {
-            req.setAttribute("Message", "Something went wrong. Try to reset password");
+            req.setAttribute("Message", Messages.WRONG_PASS.getText());
             req.getRequestDispatcher("/pages/authentication.jsp").forward(req, resp);
         }
     }

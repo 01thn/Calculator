@@ -1,8 +1,8 @@
-package com.thn.calculator.servlet;
+package com.thn.calculator.web.servlet;
 
-import com.thn.calculator.service.UserValidateService;
-import com.thn.calculator.storage.InMemoryRegisterStorage;
-import com.thn.calculator.storage.SQLRegisterStorage;
+import com.thn.calculator.storage.InMemoryUserStorage;
+import com.thn.calculator.web.info.Messages;
+import com.thn.calculator.web.validator.UserValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,28 +25,27 @@ public class SignUpServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        InMemoryRegisterStorage inMemoryRegisterStorage = new InMemoryRegisterStorage();
-        SQLRegisterStorage sqlRegisterStorage = new SQLRegisterStorage();
+        InMemoryUserStorage inMemoryUserStorage = new InMemoryUserStorage();
+//        SQLUserStorage sqlUserStorage = new SQLUserStorage();
+        UserValidator userValidator = new UserValidator();
 
         String login = req.getParameter("login");
         String name = req.getParameter("name");
         String password = req.getParameter("password");
 
-        if (!UserValidateService.loginAndNameValidate(login, name)
-                || UserValidateService.passwordValidate(password)) {
-            req.setAttribute("Message", "Check your input data. " +
-                    "Login and name gotta consist at least 3 char. Password at least 6 char and no special chars");
+        if (!userValidator.loginAndNameValidate(login, name)
+                || userValidator.passwordValidate(password)) {
+            req.setAttribute("Message", Messages.INPUT_DATA.getText());
             req.getRequestDispatcher("/pages/register.jsp").forward(req, resp);
             return;
         }
 
-        if (!inMemoryRegisterStorage.find(login) || !sqlRegisterStorage.find(login)) {
-            inMemoryRegisterStorage.save(login, name, password);
-            sqlRegisterStorage.save(login, name, password);
+        if (!inMemoryUserStorage.find(login)) {
+            inMemoryUserStorage.save(login, name, password);
             logger.info("New user has been registered");
             resp.sendRedirect("index.jsp");
         } else {
-            req.setAttribute("Message", "User with such login exists");
+            req.setAttribute("Message", Messages.COLLISION.getText());
             req.getRequestDispatcher("/pages/register.jsp").forward(req, resp);
         }
     }

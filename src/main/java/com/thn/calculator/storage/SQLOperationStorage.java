@@ -30,14 +30,14 @@ public class SQLOperationStorage implements OperationStorage {
         }
     }
 
-    private ResultSet prepareStory(long userId){
+    private ResultSet prepareStory(long userId) {
         ResultSet rs = null;
-        try{
+        try {
             Class.forName("org.postgresql.Driver");
             Connection connection = new DBConnectionManager().getConnection();
             PreparedStatement preparedStatement = connection
                     .prepareStatement("select * from operation where user_id=?");
-            preparedStatement.setLong(1,userId);
+            preparedStatement.setLong(1, userId);
             rs = preparedStatement.executeQuery();
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -52,13 +52,13 @@ public class SQLOperationStorage implements OperationStorage {
             ResultSet rs = prepareStory(userId);
             while (rs.next()) {
                 operations.add(new Operation(
-                                rs.getLong(1),
-                                rs.getLong(2),
-                                rs.getDouble(3),
-                                rs.getDouble(4),
-                                rs.getString(5),
-                                rs.getDouble(6)
-                        ));
+                        rs.getLong(1),
+                        rs.getLong(2),
+                        rs.getDouble(3),
+                        rs.getDouble(4),
+                        rs.getString(5),
+                        rs.getDouble(6)
+                ));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
